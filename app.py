@@ -3,8 +3,6 @@ import re
 import sys
 import time
 import json
-import shutil
-import gc
 from datetime import datetime
 from pathlib import Path
 import requests
@@ -12,8 +10,6 @@ import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template_string, request, Response
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_mistralai import ChatMistralAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -41,14 +37,12 @@ for d in DATA_DIRS:
 TEMP_DIR = Path(__file__).parent / "temp_downloads"
 TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text-v2-moe")
-LLM_MODEL = os.getenv("GEMINI_LLM_MODEL", "gemini-3.1-flash-lite")
 CHROMA_PREFIX = "chroma_db_hybrid"
 CHROMA_CONV_PREFIX = "chroma_db_convocatorias"
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "GEMINI").upper()
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "OLLAMA").upper()
 OLLAMA_LLM_MODEL = os.getenv("OLLAMA_LLM_MODEL", "llama3")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 MISTRAL_LLM_MODEL = os.getenv("MISTRAL_LLM_MODEL", "mistral-large-latest")
@@ -108,29 +102,23 @@ def rephrase_query_with_history(session_id, current_query, llm):
 
 def get_llm(temperature=0.2):
     """Inicializa dinámicamente el modelo LLM según el proveedor configurado."""
-    if LLM_PROVIDER == "OLLAMA":
-        return ChatOllama(
-            model=OLLAMA_LLM_MODEL,
-            base_url=OLLAMA_BASE_URL,
-            temperature=temperature
-        )
-    elif LLM_PROVIDER == "MISTRAL":
+    if LLM_PROVIDER == "MISTRAL":
         return ChatMistralAI(
             model=MISTRAL_LLM_MODEL,
             temperature=temperature,
             mistral_api_key=MISTRAL_API_KEY
         )
     else:
-        return ChatGoogleGenerativeAI(
-            model=LLM_MODEL,
-            temperature=temperature,
-            google_api_key=GEMINI_API_KEY
+        return ChatOllama(
+            model=OLLAMA_LLM_MODEL,
+            base_url=OLLAMA_BASE_URL,
+            temperature=temperature
         )
 
 app = Flask(__name__)
 
 # Inicializar bases de datos y manejadores
-faq_mgr = FAQManager(gemini_api_key=GEMINI_API_KEY, llm_model=LLM_MODEL)
+faq_mgr = FAQManager()
 tramite_auto = TramiteAutomation(sse_callback=None)
 
 # 1. Base Estática (POI, TUPA, MOF)
@@ -144,9 +132,7 @@ retriever_convocatorias = None
 doc_status = {"loaded": False, "chunks": 0, "files": [], "error": None}
 
 # Validar que tengamos las credenciales necesarias según el proveedor
-if LLM_PROVIDER == "GEMINI" and not GEMINI_API_KEY:
-    doc_status["error"] = "FALTA GEMINI_API_KEY: Configura tu archivo .env"
-elif LLM_PROVIDER == "MISTRAL" and not MISTRAL_API_KEY:
+if LLM_PROVIDER == "MISTRAL" and not MISTRAL_API_KEY:
     doc_status["error"] = "FALTA MISTRAL_API_KEY: Configura tu archivo .env"
 
 # =============================================================================
@@ -168,117 +154,6 @@ def _get_latest_chroma_dir(prefix):
         return None
     candidates.sort(key=lambda p: p.name)
     return str(candidates[-1])
-
-def _collect_files():
-    pdfs, mds, txts = [], [], []
-    for d in DATA_DIRS:
-        base = Path(d)
-        if not base.exists():
-            continue
-        for f in base.iterdir():
-            if f.is_file():
-                suf = f.suffix.lower()
-                # Filtrar y evitar re-cargar archivos descargados de convocatorias en el base estático
-                if f.name.startswith("web_convocatoria") or f.name.startswith("web_comunicado"):
-                    continue
-                if suf == ".pdf":
-                    pdfs.append(str(f))
-                elif suf == ".md":
-                    mds.append(str(f))
-                elif suf == ".txt":
-                    txts.append(str(f))
-    return pdfs, mds, txts
-
-def ingest_documents(force_reingest: bool = False) -> int:
-    global vectordb, retriever, doc_status
-    emb_model = OllamaEmbeddings(
-        model=EMBEDDING_MODEL,
-        base_url=OLLAMA_BASE_URL,
-        keep_alive="-1",
-    )
-    latest = _get_latest_chroma_dir(CHROMA_PREFIX)
-
-    if not force_reingest and latest:
-        try:
-            vectordb = Chroma(persist_directory=latest, embedding_function=emb_model)
-            retriever = vectordb.as_retriever(search_kwargs={"k": 4})
-            try:
-                chunks_count = vectordb._collection.count()
-            except Exception:
-                chunks_count = 0
-            
-            pdfs, mds, txts = _collect_files()
-            loaded_files = [f"Archivo: {Path(p).name} (caché)" for p in pdfs + mds + txts]
-            
-            doc_status = {"loaded": True, "chunks": chunks_count, "files": loaded_files, "error": None}
-            return chunks_count
-        except Exception as e:
-            print(f"[!] Error al cargar caché: {e}. Re-ingestando...")
-
-    # Ingesta completa en nuevo directorio
-    vectordb = None
-    retriever = None
-    gc.collect()
-    time.sleep(0.5)
-
-    pdfs, mds, txts = _collect_files()
-    all_docs = []
-    loaded_files = []
-
-    for pdf_path in pdfs:
-        path = Path(pdf_path)
-        try:
-            docs = PyPDFLoader(str(path)).load()
-            for d in docs:
-                d.metadata["source_type"] = "pdf"
-                d.metadata["file_name"] = path.name
-                d.metadata["folder"] = str(path.parent)
-            all_docs.extend(docs)
-            loaded_files.append(f"PDF: {path.name}")
-        except Exception as e:
-            loaded_files.append(f"PDF ERROR: {path.name} — {e}")
-
-    for md_path in mds:
-        path = Path(md_path)
-        try:
-            docs = TextLoader(str(path), encoding="utf-8").load()
-            for d in docs:
-                d.metadata["source_type"] = "markdown"
-                d.metadata["file_name"] = path.name
-                d.metadata["folder"] = str(path.parent)
-                d.metadata.setdefault("page", "-")
-            all_docs.extend(docs)
-            loaded_files.append(f"MD: {path.name}")
-        except Exception as e:
-            loaded_files.append(f"MD ERROR: {path.name} — {e}")
-
-    for txt_path in txts:
-        path = Path(txt_path)
-        try:
-            docs = TextLoader(str(path), encoding="utf-8").load()
-            for d in docs:
-                d.metadata["source_type"] = "txt"
-                d.metadata["file_name"] = path.name
-                d.metadata["folder"] = str(path.parent)
-                d.metadata.setdefault("page", "-")
-            all_docs.extend(docs)
-            loaded_files.append(f"TXT: {path.name}")
-        except Exception as e:
-            loaded_files.append(f"TXT ERROR: {path.name} — {e}")
-
-    if not all_docs:
-        doc_status = {"loaded": False, "chunks": 0, "files": loaded_files, "error": "No se encontraron documentos."}
-        return 0
-
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200, separators=["\n\n", "\n", " ", ""])
-    splits = splitter.split_documents(all_docs)
-
-    chroma_dir = _make_chroma_dir(CHROMA_PREFIX)
-    vectordb = Chroma.from_documents(documents=splits, embedding=emb_model, persist_directory=chroma_dir)
-    retriever = vectordb.as_retriever(search_kwargs={"k": 4})
-
-    doc_status = {"loaded": True, "chunks": len(splits), "files": loaded_files, "error": None}
-    return len(splits)
 
 def init_vector_databases():
     """Carga de forma independiente la base vectorial estática de RAG."""
@@ -1780,7 +1655,7 @@ def analyze_pdf_sse_route():
                 yield format_sse({"type": "progress", "message": "Analizando documento oficial..."})
                 
                 # Inicializar PDFProcessor
-                processor = PDFProcessor(gemini_api_key=GEMINI_API_KEY, llm_model=LLM_MODEL)
+                processor = PDFProcessor(gemini_api_key=None)
                 
                 # Consola
                 print(f"[CONSOLE LOG] [{session_id}] [PDF PROCESSOR] Enviando a PDFProcessor. OCR={processor.mineru_is_ocr}, Idioma={processor.mineru_language_str}", flush=True)
@@ -1936,11 +1811,8 @@ def status_route():
 # MAIN
 # =============================================================================
 def main():
-    if not GEMINI_API_KEY and LLM_PROVIDER == "GEMINI":
-        print("[!] ADVERTENCIA: GEMINI_API_KEY no configurada en el entorno.")
-    else:
-        print("[+] Cargando bases vectoriales locales...")
-        init_vector_databases()
+    print("[+] Cargando bases vectoriales locales...")
+    init_vector_databases()
             
     print("[+] Servidor v2 Ciudadano Inteligente corriendo en: http://localhost:5000")
     app.run(host="0.0.0.0", port=5000, debug=False)
