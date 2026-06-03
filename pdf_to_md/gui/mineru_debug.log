@@ -1,0 +1,66 @@
+2026-05-31 00:31:16,591 [INFO] Iniciando conversion de 3 archivo(s)
+2026-05-31 00:31:16,597 [INFO] Cliente creado. Procesando 3 archivo(s)
+2026-05-31 00:31:16,616 [INFO] Solicitando URLs de subida para 1 archivo(s)...
+2026-05-31 00:31:17,580 [INFO] URLs recibidas. batch_id: 8c1858a4-c51c-4412-add2-af15c2ae719a
+2026-05-31 00:31:17,588 [INFO] Subiendo archivo: Manual de operaciones MOP.pdf (39719258 bytes)
+2026-05-31 00:31:39,546 [WARNING] Upload intento 1/3 fallido: ConnectionError - HTTPSConnectionPool(host='mineru.oss-cn-shanghai.aliyuncs.com', port=443): Max retries exceeded with url: /api-upload/extract/2026-05-31/8c1858a4-c51c-4412-add2-af15c2ae719a/072ed341-09a8-4977-8f1f-1777f6b473ab.pdf?Expires=1780291877&OSSAccessKeyId=LTAI5t8fSGMgiRhQn4mpp926&Signature=Us1bS4rcIecj6yDmwBWGNGFHgPY%3D (Caused by ProtocolError('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None)))
+2026-05-31 00:31:39,549 [INFO] Reintentando upload en 1s...
+2026-05-31 00:31:42,811 [WARNING] Upload intento 2/3 fallido: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:31:42,811 [INFO] Reintentando upload en 2s...
+2026-05-31 00:31:47,348 [WARNING] Upload intento 3/3 fallido: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:31:47,350 [ERROR] Error procesando Manual de operaciones MOP.pdf: Fallo de conexion al subir archivo despues de 3 intentos: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:31:47,370 [ERROR] Error en Manual de operaciones MOP.pdf: Fallo de conexion al subir archivo despues de 3 intentos: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+
+Posibles causas:
+1. Firewall/antivirus bloqueando la conexion
+2. Token API invalido o expirado
+3. Problema temporal del servidor (reintenta)
+4. Proxy configurado incorrectamente
+
+2026-05-31 00:31:47,403 [INFO] Solicitando URLs de subida para 1 archivo(s)...
+2026-05-31 00:31:48,526 [INFO] URLs recibidas. batch_id: 0c52717e-f4bd-4111-b855-14f2ddddffde
+2026-05-31 00:31:48,530 [INFO] Subiendo archivo: REGLAMENTO INTERNO DREP 2022.pdf (9320013 bytes)
+2026-05-31 00:32:10,415 [WARNING] Upload intento 1/3 fallido: ConnectionError - HTTPSConnectionPool(host='mineru.oss-cn-shanghai.aliyuncs.com', port=443): Max retries exceeded with url: /api-upload/extract/2026-05-31/0c52717e-f4bd-4111-b855-14f2ddddffde/aa676e11-8940-4ce1-9fd8-64d9648bbc4d.pdf?Expires=1780291908&OSSAccessKeyId=LTAI5t8fSGMgiRhQn4mpp926&Signature=tUr%2By4jJAodzsJMjy6%2FIqWSgYdk%3D (Caused by ProtocolError('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None)))
+2026-05-31 00:32:10,416 [INFO] Reintentando upload en 1s...
+2026-05-31 00:32:13,628 [WARNING] Upload intento 2/3 fallido: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:32:13,632 [INFO] Reintentando upload en 2s...
+2026-05-31 00:32:18,215 [WARNING] Upload intento 3/3 fallido: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:32:18,215 [ERROR] Error procesando REGLAMENTO INTERNO DREP 2022.pdf: Fallo de conexion al subir archivo despues de 3 intentos: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:32:18,228 [ERROR] Error en REGLAMENTO INTERNO DREP 2022.pdf: Fallo de conexion al subir archivo despues de 3 intentos: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+
+Posibles causas:
+1. Firewall/antivirus bloqueando la conexion
+2. Token API invalido o expirado
+3. Problema temporal del servidor (reintenta)
+4. Proxy configurado incorrectamente
+
+2026-05-31 00:32:18,242 [INFO] Solicitando URLs de subida para 1 archivo(s)...
+2026-05-31 00:32:19,155 [INFO] URLs recibidas. batch_id: b51683bb-ed0a-4cc9-83f8-89484c93c0f9
+2026-05-31 00:32:19,157 [INFO] Subiendo archivo: ROF_DRE.PDF (2359571 bytes)
+2026-05-31 00:32:41,099 [WARNING] Upload intento 1/3 fallido: ConnectionError - HTTPSConnectionPool(host='mineru.oss-cn-shanghai.aliyuncs.com', port=443): Max retries exceeded with url: /api-upload/extract/2026-05-31/b51683bb-ed0a-4cc9-83f8-89484c93c0f9/ab33eabd-d01a-45c8-96f7-6ffa65064132.pdf?Expires=1780291939&OSSAccessKeyId=LTAI5t8fSGMgiRhQn4mpp926&Signature=kHpNQTaLVRrztzSzqbyaRhf00eE%3D (Caused by ProtocolError('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None)))
+2026-05-31 00:32:41,099 [INFO] Reintentando upload en 1s...
+2026-05-31 00:32:45,286 [WARNING] Upload intento 2/3 fallido: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:32:45,287 [INFO] Reintentando upload en 2s...
+2026-05-31 00:32:49,539 [WARNING] Upload intento 3/3 fallido: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:32:49,539 [ERROR] Error procesando ROF_DRE.PDF: Fallo de conexion al subir archivo despues de 3 intentos: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-05-31 00:32:49,554 [ERROR] Error en ROF_DRE.PDF: Fallo de conexion al subir archivo despues de 3 intentos: ConnectionError - ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+
+Posibles causas:
+1. Firewall/antivirus bloqueando la conexion
+2. Token API invalido o expirado
+3. Problema temporal del servidor (reintenta)
+4. Proxy configurado incorrectamente
+
+2026-05-31 00:57:44,797 [INFO] Iniciando conversion de 1 archivo(s)
+2026-05-31 00:57:44,801 [INFO] Cliente creado. Procesando 1 archivo(s)
+2026-05-31 00:57:44,819 [INFO] Solicitando URLs de subida para 1 archivo(s)...
+2026-05-31 00:57:44,831 [INFO] Opciones: model=vlm, OCR=True, formula=True, table=True, lang=es
+2026-05-31 00:57:46,439 [INFO] URLs recibidas. batch_id: db38ee16-744d-41df-9e87-bdd1b60ed958
+2026-05-31 00:57:46,441 [INFO] Subiendo: CUADRO MULTIANUAL DE NECESIDADES INICIAL - 2026.pdf (438009 bytes)
+2026-05-31 00:57:46,444 [INFO] Estrategia de subida: standard
+2026-05-31 00:57:53,178 [INFO] Subida exitosa (standard)
+2026-05-31 00:57:53,179 [INFO] Esperando resultados del batch: db38ee16-744d-41df-9e87-bdd1b60ed958
+2026-05-31 00:57:53,541 [WARNING] Estado desconocido para CUADRO MULTIANUAL DE NECESIDADES INICIAL - 2026.pdf: waiting-file
+2026-05-31 00:58:14,313 [INFO] Batch completo. 1 archivo(s) procesado(s)
+2026-05-31 00:58:14,326 [INFO] Descargando resultado: https://cdn-mineru.openxlab.org.cn/pdf/2026-05-31/93922e3f-a5a3-487b-80b2-4e60c7...
+2026-05-31 00:58:17,412 [INFO] Descarga completada (851304 bytes)

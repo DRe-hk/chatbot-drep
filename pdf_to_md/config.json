@@ -1,0 +1,14 @@
+{
+  "api_token": "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJqdGkiOiI5MDAwMDkwNSIsInJvbCI6IlJPTEVfUkVHSVNURVIiLCJpc3MiOiJPcGVuWExhYiIsImlhdCI6MTc4MDIwMzA4MSwiY2xpZW50SWQiOiJsa3pkeDU3bnZ5MjJqa3BxOXgydyIsInBob25lIjoiIiwib3BlbklkIjpudWxsLCJ1dWlkIjoiOGM5ZDA5ZDEtNTBhYi00M2Q0LTk1NmItYmNjZjZiZDQwNzhiIiwiZW1haWwiOiIiLCJleHAiOjE3ODc5NzkwODF9.a6krmezBpabvlJjSt4gcDymrg0CTcMpoEkCUiI59HriIVPcMNdfDmxhzVX4V6uP2MJzdq7driu5K5aH4VCXEDw",
+  "output_dir": "C:\\Users\\wilso\\mineru_output",
+  "model_version": "pipeline",
+  "is_ocr": false,
+  "enable_formula": true,
+  "enable_table": true,
+  "language": "en",
+  "extra_docx": false,
+  "extra_html": false,
+  "extra_latex": false,
+  "no_cache": false,
+  "cache_tolerance": 900
+}
